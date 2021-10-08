@@ -29,8 +29,8 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>flink-shaded-hadoop-2-parent</artifactId>
-    <name>flink-shaded-hadoop-2-parent</name>
+    <artifactId>flink-shaded-hadoop-parent</artifactId>
+    <name>flink-shaded-hadoop-parent</name>
     <packaging>pom</packaging>
     <version>10.0</version>
 
@@ -38,7 +38,7 @@ under the License.
         <!-- never use this in the parent module; otherwise it would need to be versioned by hadoop version; this must
             not be done since the parent reference in child modules must not have dynamic elements as otherwise it
             cannot be resolved -->
-        <hadoop.version>2.4.1</hadoop.version>
+        <hadoop.version>3.1.1</hadoop.version>
         <!-- pinned transitive dependencies-->
         <avro.version>1.8.2</avro.version>
         <slf4j.version>1.7.15</slf4j.version>
@@ -48,8 +48,9 @@ under the License.
     </properties>
 
     <modules>
-        <module>flink-shaded-hadoop-2</module>
-        <module>flink-shaded-hadoop-2-uber</module>
+        <module>flink-shaded-hadoop</module>
+        <module>flink-shaded-hadoop-uber</module>
+        <module>flink-shaded-hadoop-hive</module>
     </modules>
 
     <dependencyManagement>

@@ -56,8 +56,7 @@ under the License.
     </properties>
 
     <modules>
-        <module>flink-shaded-hadoop-2-parent</module>
-        <module>flink-shaded-hadoop-3-parent</module>
+        <module>flink-shaded-hadoop-parent</module>
     </modules>
 
     <profiles>
