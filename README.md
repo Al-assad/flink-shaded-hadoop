@@ -1,7 +1,7 @@
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
+~~distributed with this work for additional information~~
 regarding copyright ownership.  The ASF licenses this file
 to you under the Apache License, Version 2.0 (the
 "License"); you may not use this file except in compliance
@@ -27,6 +27,28 @@ With the exception of `flink-shaded-hadoop-2` and `flink-shaded-hadoop-3`, shade
 
 When using these dependencies it is recommended to work directly against the shaded namespaces.
 
+##  Build Shaded Hadoop JAR
+
+```shell
+git clone https://github.com/Al-assad/flink-shaded-hadoop.git
+
+# build shaded-hadoop-2, default hadoop version is 2.4.1
+cd ./flink-shaded-hadoop/flink-shaded-hadoop-2-parent
+mvn clean install
+
+# build shaded-hadoop-3, default hadoop version is 3.1.1
+cd ./flink-shaded-hadoop/flink-shaded-hadoop-3-parent
+mvn clean install
+```
+
+## Custom Hadoop Version
+
+```shell
+# hadoop version specified as 3.1.0
+cd ./flink-shaded-hadoop/flink-shaded-hadoop-3-parent
+mvn clean install -Dhadoop.version=3.1.0
+```
+
 ## Sources
 
 We currently do not release jars containing the shaded sources due to the unanswered legal questions raised [here](https://github.com/apache/flink-shaded/issues/25).
@@ -36,3 +58,4 @@ However, it is possible to build these jars locally by cloning the repository an
 ## About
 
 Apache Flink is an open source project of [The Apache Software Foundation](https://apache.org/) (ASF).
+
