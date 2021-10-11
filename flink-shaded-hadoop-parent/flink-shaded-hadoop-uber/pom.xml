@@ -37,7 +37,7 @@ under the License.
 	<version>${hadoop.version}</version>
 
 	<!--
-		the only dependency of the 'flink-shaded-hadoop-3' artifact, out
+		the only dependency of the 'flink-shaded-hadoop' artifact, out
 		of which we build a fat jar
 	-->
 
