@@ -19,6 +19,8 @@ under the License.
 
 # Shaded Hadoop Dependencies for Flink
 
+<br>
+
 This repository contains a number of shaded Hadoop dependencies for the [Apache Flink](https://flink.apache.org/) project, based on release-10.0 branch of [apache/flink-shaded](https://github.com/apache/flink-shaded/tree/release-10.0) project.
 
 The project supports `Hadoop-2` and `Hadoop-3` , including the following shaded subprojects:
@@ -26,6 +28,8 @@ The project supports `Hadoop-2` and `Hadoop-3` , including the following shaded 
 * `flink-shaded-hadoop`:  Contains the main shaded Hadoop dependenices used by Flink .
 * `flink-shaded-hadoop-uber`:  Uber-shaded project of `flink-shaded-hadoop`.
 * `flink-shaded-hadoop-hive`:  Contains the main shaded Hadoop and. Hive dependenices used by Flink .
+
+<br>
 
 ##  Build Shaded Hadoop JAR
 
@@ -40,6 +44,8 @@ Default Version:
 * Hadoop-3.1.1
 * Hive-3.1.1
 
+<br>
+
 ## Custom Hadoop/Hive Version
 
 ```bash
@@ -47,6 +53,8 @@ Default Version:
 # use hadoop-3.1.0 and hive-3.1.0
 mvn clean install -Dhadoop.version=3.1.0 -Dhive.version=3.1.0
 ```
+
+<br>
 
 ## About
 
