@@ -19,176 +19,247 @@ under the License.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.apache.flink</groupId>
-		<artifactId>flink-shaded-hadoop-parent</artifactId>
-		<version>10.0</version>
-		<relativePath>..</relativePath>
-	</parent>
+    <parent>
+        <groupId>org.apache.flink</groupId>
+        <artifactId>flink-shaded-hadoop-parent</artifactId>
+        <version>10.0</version>
+        <relativePath>..</relativePath>
+    </parent>
 
-	<artifactId>flink-shaded-hadoop-hive</artifactId>
-	<name>flink-shaded-hadoop-hive</name>
+    <artifactId>flink-shaded-hadoop-hive</artifactId>
+    <name>flink-shaded-hadoop-hive</name>
 
-	<packaging>jar</packaging>
-	<version>${hadoop.version}</version>
+    <packaging>jar</packaging>
+    <version>${hadoop.version}_${hive.version}</version>
 
-	<!--
-		the only dependency of the 'flink-shaded-hadoop-3' artifact, out
-		of which we build a fat jar
-	-->
+    <dependencies>
+        <!-- hadoop dependencies -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-shaded-hadoop</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-shaded-hadoop</artifactId>
-			<version>${hadoop.version}</version>
-		</dependency>
-	</dependencies>
+        <!-- hive dependencies -->
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-exec</artifactId>
+            <version>${hive.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hadoop-hdfs</artifactId>
+                    <groupId>org.apache.hadoop</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>hadoop-common</artifactId>
+                    <groupId>org.apache.hadoop</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libfb303</artifactId>
+            <version>0.9.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version>3.5.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
 
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<!-- These exclusions should not be necessary (since they are already
-					included in flink-shaded-hadoop), but on some setups they are
-					being ignored.
-					The cause is unknown; this is just safeguard.-->
-				<groupId>org.apache.zookeeper</groupId>
-				<artifactId>zookeeper</artifactId>
-				<exclusions>
-					<exclusion>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-log4j12</artifactId>
-					</exclusion>
-					<!-- Netty is only needed for ZK servers, not clients -->
-					<exclusion>
-						<groupId>io.netty</groupId>
-						<artifactId>netty</artifactId>
-					</exclusion>
-					<!-- jline is optional for ZK console shell -->
-					<exclusion>
-						<groupId>jline</groupId>
-						<artifactId>jline</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-		</dependencies>
 
-	</dependencyManagement>
+    <profiles>
+        <!-- special hive version dependencies -->
+        <!-- hive 2.2-->
+        <profile>
+            <id>hive-2.2</id>
+            <activation>
+                <property>
+                    <name>hive.version</name>
+                    <value>2.2.0</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.orc</groupId>
+                    <artifactId>orc-core</artifactId>
+                    <version>1.4.3</version>
+                </dependency>
+                <dependency>
+                    <groupId>io.airlift</groupId>
+                    <artifactId>aircompressor</artifactId>
+                    <version>0.8</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
-	<build>
-		<plugins>
 
-			<!-- 
-				Build an uber jar of the shaded-hadoop-dependency
-				and all its transitive dependencies
-			-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>dependency-convergence</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>dependency-convergence</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>shade-flink</id>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<createDependencyReducedPom>true</createDependencyReducedPom>
-							<dependencyReducedPomLocation>${project.basedir}/target/dependency-reduced-pom.xml</dependencyReducedPomLocation>
-							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>shade-flink</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <dependencyReducedPomLocation>${project.basedir}/target/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
 
-							<filters>
-								<!-- Exclude signatures -->
-								<filter>
-									<artifact>*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
+                            <filters>
+                                <!-- Exclude signatures -->
+                                <filter>
+                                    <artifact>*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
 
-							<artifactSet>
-								<includes>
-									<include>*:*</include>
-								</includes>
-								<excludes>
-									<exclude>org.slf4j:*</exclude>
-									<exclude>log4j:*</exclude>
-								</excludes>
-							</artifactSet>
+                            <artifactSet>
+                                <includes>
+                                    <!-- flink-shaded-hadoop dependencies -->
+                                    <include>com.google.guava:*</include>
+                                    <include>com.google.protobuf:*</include>
+                                    <include>com.google.code.findbugs:*</include>
+                                    <include>asm:asm</include>
+                                    <include>io.netty:netty:*</include>
+                                    <include>io.netty:netty-all:*</include>
+                                    <include>org.apache.curator:*</include>
+                                    <include>org.apache.hadoop:*</include>
+                                    <include>org.htrace:htrace-core</include>
+                                    <include>net.java.dev.jets3t:jets3t</include>
+                                    <include>org.apache.httpcomponents:*</include>
+                                    <include>commons-httpclient:commons-httpclient</include>
+                                    <include>org.codehaus.jackson:*</include>
 
-							<relocations>
-								<relocation>
-									<pattern>com.google</pattern>
-									<shadedPattern>${shading.prefix}.hadoop2.com.google</shadedPattern>
-									<excludes>
-										<exclude>com.google.inject.**</exclude>
-									</excludes>
-								</relocation>
-								<relocation>
-									<pattern>org.objectweb.asm</pattern>
-									<shadedPattern>${shading.prefix}.hadoop2.org.objectweb.asm</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.jboss.netty</pattern>
-									<shadedPattern>${shading.prefix}.hadoop2.org.jboss.netty</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>io.netty</pattern>
-									<shadedPattern>${shading.prefix}.hadoop2.io.netty</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.apache.curator</pattern>
-									<shadedPattern>${shading.prefix}.hadoop2.org.apache.curator</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.apache.http</pattern>
-									<shadedPattern>${shading.prefix}.hadoop2.org.apache.http</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.apache.commons.httpclient</pattern>
-									<shadedPattern>${shading.prefix}.hadoop2.org.apache.commons.httpclient</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.htrace</pattern>
-									<shadedPattern>${shading.prefix}.hadoop2.org.htrace</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.codehaus.jackson</pattern>
-									<shadedPattern>${shading.prefix}.hadoop2.org.codehaus.jackson</shadedPattern>
-								</relocation>
-							</relocations>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+                                    <!-- hive-exec dependencies -->
+                                    <include>org.apache.hive:hive-common</include>
+                                    <include>org.apache.hive:hive-exec</include>
+                                    <include>org.apache.hive:hive-serde</include>
+                                    <include>org.apache.hive:hive-llap-common</include>
+                                    <include>org.apache.hive:hive-llap-client</include>
+                                    <include>org.apache.hive:hive-metastore</include>
+                                    <include>org.apache.hive:hive-standalone-metastore</include>
+                                    <include>org.apache.hive:hive-service-rpc</include>
+                                    <include>com.esotericsoftware:kryo-shaded</include>
+                                    <include>com.esotericsoftware:minlog</include>
+                                    <include>org.objenesis:objenesis</include>
+                                    <include>org.apache.parquet:parquet-hadoop-bundle</include>
+                                    <include>org.apache.thrift:libthrift</include>
+                                    <include>javax.jdo:jdo-api</include>
+                                    <include>commons-lang:commons-lang</include>
+                                    <include>org.apache.commons:commons-lang3</include>
+                                    <include>org.jodd:jodd-core</include>
+                                    <include>com.tdunning:json</include>
+                                    <include>org.apache.avro:avro</include>
+                                    <include>org.apache.avro:avro-mapred</include>
+                                    <include>org.apache.hive.shims:hive-shims-0.23</include>
+                                    <include>org.apache.hive.shims:hive-shims-0.23</include>
+                                    <include>org.apache.hive.shims:hive-shims-common</include>
+                                    <include>com.googlecode.javaewah:JavaEWAH</include>
+                                    <include>javolution:javolution</include>
+                                    <include>com.google.protobuf:protobuf-java</include>
+                                    <include>io.airlift:aircompressor</include>
+                                    <include>org.codehaus.jackson:jackson-core-asl</include>
+                                    <include>org.codehaus.jackson:jackson-mapper-asl</include>
+                                    <include>com.google.guava:guava</include>
+                                    <include>net.sf.opencsv:opencsv</include>
+                                    <include>org.apache.hive:hive-spark-client</include>
+                                    <include>org.apache.hive:hive-storage-api</include>
+                                    <include>org.apache.orc:orc-core</include>
+                                    <include>org.apache.orc:orc-shims</include>
+                                    <include>org.apache.orc:orc-tools</include>
+                                    <include>joda-time:joda-time</include>
+                                </includes>
+
+                                <excludes>
+                                    <exclude>org.slf4j:*</exclude>
+                                    <exclude>log4j:*</exclude>
+                                </excludes>
+                            </artifactSet>
+
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google</pattern>
+                                    <shadedPattern>${shading.prefix}.hadoop2.com.google</shadedPattern>
+                                    <excludes>
+                                        <exclude>com.google.inject.**</exclude>
+                                    </excludes>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.objectweb.asm</pattern>
+                                    <shadedPattern>${shading.prefix}.hadoop2.org.objectweb.asm</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.jboss.netty</pattern>
+                                    <shadedPattern>${shading.prefix}.hadoop2.org.jboss.netty</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.netty</pattern>
+                                    <shadedPattern>${shading.prefix}.hadoop2.io.netty</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.curator</pattern>
+                                    <shadedPattern>${shading.prefix}.hadoop2.org.apache.curator</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.http</pattern>
+                                    <shadedPattern>${shading.prefix}.hadoop2.org.apache.http</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons.httpclient</pattern>
+                                    <shadedPattern>${shading.prefix}.hadoop2.org.apache.commons.httpclient</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.htrace</pattern>
+                                    <shadedPattern>${shading.prefix}.hadoop2.org.htrace</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.codehaus.jackson</pattern>
+                                    <shadedPattern>${shading.prefix}.hadoop2.org.codehaus.jackson</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
