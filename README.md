@@ -17,43 +17,36 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-# Apache Flink Shaded Dependencies
+# Shaded Hadoop Dependencies for Flink
 
-This repository contains a number of shaded dependencies for the [Apache Flink](https://flink.apache.org/) project.
+This repository contains a number of shaded Hadoop dependencies for the [Apache Flink](https://flink.apache.org/) project, based on release-10.0 branch of [apache/flink-shaded](https://github.com/apache/flink-shaded/tree/release-10.0) project.
 
-The purpose of these dependencies is to provide a single instance of a shaded dependency in the Flink distribution, instead of each individual module shading the dependency.
+The project supports `Hadoop-2` and `Hadoop-3` , including the following shaded subprojects:
 
-With the exception of `flink-shaded-hadoop-2` and `flink-shaded-hadoop-3`, shaded dependencies contained here do not expose any transitive dependencies. They may or may not be self-contained.
-
-When using these dependencies it is recommended to work directly against the shaded namespaces.
+* `flink-shaded-hadoop`:  Contains the main shaded Hadoop dependenices used by Flink .
+* `flink-shaded-hadoop-uber`:  Uber-shaded project of `flink-shaded-hadoop`.
+* `flink-shaded-hadoop-hive`:  Contains the main shaded Hadoop and. Hive dependenices used by Flink .
 
 ##  Build Shaded Hadoop JAR
 
-```shell
+```bash
 git clone https://github.com/Al-assad/flink-shaded-hadoop.git
-
-# build shaded-hadoop-2, default hadoop version is 2.4.1
-cd ./flink-shaded-hadoop/flink-shaded-hadoop-2-parent
-mvn clean install
-
-# build shaded-hadoop-3, default hadoop version is 3.1.1
-cd ./flink-shaded-hadoop/flink-shaded-hadoop-3-parent
+cd ./flink-shaded-hadoop
 mvn clean install
 ```
 
-## Custom Hadoop Version
+Default Version:
 
-```shell
-# hadoop version specified as 3.1.0
-cd ./flink-shaded-hadoop/flink-shaded-hadoop-3-parent
-mvn clean install -Dhadoop.version=3.1.0
+* Hadoop-3.1.1
+* Hive-3.1.1
+
+## Custom Hadoop/Hive Version
+
+```bash
+
+# use hadoop-3.1.0 and hive-3.1.0
+mvn clean install -Dhadoop.version=3.1.0 -Dhive.version=3.1.0
 ```
-
-## Sources
-
-We currently do not release jars containing the shaded sources due to the unanswered legal questions raised [here](https://github.com/apache/flink-shaded/issues/25).
-
-However, it is possible to build these jars locally by cloning the repository and calling `mvn package -Dshade-sources`.
 
 ## About
 
