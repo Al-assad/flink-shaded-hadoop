@@ -52,6 +52,7 @@ under the License.
         <module>flink-shaded-hadoop</module>
         <module>flink-shaded-hadoop-uber</module>
         <module>flink-shaded-hadoop-hive</module>
+        <module>flink-shaded-hadoop-hive-uber</module>
     </modules>
 
     <dependencyManagement>
