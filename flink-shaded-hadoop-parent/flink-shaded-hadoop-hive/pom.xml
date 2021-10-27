@@ -59,6 +59,10 @@ under the License.
                     <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
+                    <artifactId>dropwizard-metrics-hadoop-metrics2-reporter</artifactId>
+                    <groupId>com.github.joshelser</groupId>
+                </exclusion>
+                <exclusion>
                     <artifactId>log4j-core</artifactId>
                     <groupId>org.apache.logging.log4j</groupId>
                 </exclusion>
@@ -191,6 +195,7 @@ under the License.
                                     <include>org.apache.httpcomponents:*</include>
                                     <include>commons-httpclient:commons-httpclient</include>
                                     <include>org.codehaus.jackson:*</include>
+                                    <include>com.fasterxml.woodstox:woodstox-core</include>
 
                                     <!-- hive-exec dependencies -->
                                     <include>org.apache.hive:hive-common</include>

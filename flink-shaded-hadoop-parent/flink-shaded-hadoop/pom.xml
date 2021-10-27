@@ -925,6 +925,7 @@ under the License.
 									<include>org.apache.curator:*</include>
 									<include>org.apache.hadoop:*</include>
 									<include>org.htrace:htrace-core</include>
+									<include>com.fasterxml.woodstox:woodstox-core</include>
 
 									<!-- This dependency needs to be included to properly get rid of the HTTP Components dependency -->
 									<include>net.java.dev.jets3t:jets3t</include>
